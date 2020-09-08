@@ -6,7 +6,11 @@ const postSchema = new Schema({
     required: true
   },
   audience: String,
-  image: String
+  image: String,
+  date: {
+    type: Date,
+    default: Date.now
+  }
 })
 
 export default model('Post', postSchema)

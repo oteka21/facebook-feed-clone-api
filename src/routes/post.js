@@ -10,9 +10,9 @@ route.get('/', async (req, res) => {
   let posts = []
   try {
     if (!filter || filter.toUpperCase() === 'PUBLIC') {
-      posts = await Post.find()
+      posts = await Post.find().sort({ date: 'desc' })
     } else {
-      posts = await Post.find({ audience: filter.toUpperCase() })
+      posts = await Post.find({ audience: filter.toUpperCase() }).sort({ date: 'desc' })
     }
   } catch (err) {
     return res.status(500).send(err.message)
@@ -37,12 +37,12 @@ route.get('/:id', async (req, res) => {
 
 // create a post
 route.post('/', async (req, res) => {
-  const { content, audience } = req.body
+  const { content, audience = 'PUBLIC' } = req.body
   let createdPost = {}
   try {
     createdPost = await Post.create({
       content,
-      audience
+      audience: audience.toUpperCase()
     })
     createdPost.save()
   } catch (err) {
@@ -87,10 +87,7 @@ route.delete('/:id', async (req, res) => {
     return res.status(404).send('Post not found!')
   }
 
-  res.json({
-    statusCode: 200,
-    result
-  })
+  res.json(result)
 })
 
 export default route
